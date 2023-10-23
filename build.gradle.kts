@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
+    kotlin("plugin.serialization") version "1.8.20"
 }
 
 group = "com.artemissoftware"
@@ -23,6 +24,9 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.2")
+
                 implementation("com.google.code.gson:gson:2.8.9")
             }
         }
