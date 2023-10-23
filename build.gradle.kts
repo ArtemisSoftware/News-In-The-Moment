@@ -23,6 +23,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation("com.google.code.gson:gson:2.8.9")
             }
         }
         val jvmTest by getting
