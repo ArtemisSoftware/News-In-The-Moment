@@ -28,6 +28,9 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.2")
 
                 implementation("com.google.code.gson:gson:2.8.9")
+
+                implementation("io.ktor:ktor-client-cio-jvm:2.3.2")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.2")
             }
         }
         val jvmTest by getting
