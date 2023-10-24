@@ -25,6 +25,8 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
 
+                implementation("org.jetbrains.compose.material3:material3-desktop:1.5.3")
+
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.2")
 
                 implementation("com.google.code.gson:gson:2.8.9")
