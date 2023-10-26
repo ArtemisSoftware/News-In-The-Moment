@@ -17,8 +17,8 @@ object NewsApiClient {
         }
     }
 
-    suspend fun getTopHeadlines(): NewsDto {
-        val url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=${Constants.API_KEY}"
+    suspend fun getTopHeadlines(country: String): NewsDto {
+        val url = "https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${Constants.API_KEY}"
         return client.get(url).body()
     }
 
