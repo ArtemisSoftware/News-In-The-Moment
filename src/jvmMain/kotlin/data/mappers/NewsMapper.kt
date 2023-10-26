@@ -2,6 +2,7 @@ package data.mappers
 
 import data.remote.dto.ArticleDto
 import domain.models.Article
+import util.UrlUtils.getBitmap
 
 fun ArticleDto.toArticle(): Article{
     return Article(
@@ -9,5 +10,7 @@ fun ArticleDto.toArticle(): Article{
         imageUrl = urlToImage,
         title = title ?: "",
         content = content ?: "",
+        source = source.name,
+        image = urlToImage?.let { getBitmap(urlToImage) } ?: run { null }
     )
 }

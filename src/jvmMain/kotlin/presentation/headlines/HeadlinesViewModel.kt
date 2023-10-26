@@ -2,7 +2,6 @@ package presentation.headlines
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import data.repository.NewsRepositoryImpl
 import domain.models.Article
@@ -13,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 
-class Headlines(newsRepository: NewsRepositoryImpl = KoinJavaComponent.get(NewsRepository::class.java)) {
+class HeadlinesViewModel(newsRepository: NewsRepositoryImpl = KoinJavaComponent.get(NewsRepository::class.java)) {
 
     var searchedText by mutableStateOf("")
     var title by mutableStateOf("Headlines")
