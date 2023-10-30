@@ -1,7 +1,7 @@
 package presentation.headlines
 
 import domain.models.CountryCode
-import presentation.headlines.mappers.ArticleUI
+import presentation.headlines.models.ArticleUI
 
 data class HeadlinesState(
     val isLoading: Boolean = false,

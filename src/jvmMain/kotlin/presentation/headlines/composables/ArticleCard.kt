@@ -7,18 +7,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.*
 import domain.models.ArticleType
-import presentation.headlines.mappers.ArticleUI
+import presentation.headlines.models.ArticleUI
 import util.CursorUtils.handCursor
 
 @Composable
@@ -32,7 +31,7 @@ fun ArticleCard(
         modifier = modifier
             .pointerHoverIcon(handCursor())
             .clickable {
-                onClick.invoke(article.url)
+                onClick.invoke(article.postUrl)
             },
         contentColor = MaterialTheme.colorScheme.surface
     ) {
@@ -42,9 +41,17 @@ fun ArticleCard(
         ) {
             ArticleImage(
                 type = article.type,
-                image = article.image,
-                imageSize = imageSize,
+                content = {
+                    Image(
+                        bitmap = article.default,
+                        "news thumbnail",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(imageSize)
+                    )
+                }
             )
+
+
 
             Column(
                 modifier = Modifier
@@ -91,8 +98,7 @@ fun ArticleCard(
 @Composable
 private fun ArticleImage(
     type: ArticleType,
-    image: ImageBitmap,
-    imageSize: Dp
+    content: @Composable () -> Unit
 ) {
     when(type){
         ArticleType.HEADLINE -> {
@@ -100,21 +106,11 @@ private fun ArticleImage(
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.padding(20.dp)
             ) {
-                Image(
-                    bitmap = image,
-                    "news thumbnail",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(imageSize)
-                )
+                content.invoke()
             }
         }
         ArticleType.STANDARD -> {
-            Image(
-                bitmap = image,
-                "news thumbnail",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(imageSize)
-            )
+            content.invoke()
         }
     }
 }
