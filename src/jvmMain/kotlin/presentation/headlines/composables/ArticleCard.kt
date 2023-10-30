@@ -25,14 +25,14 @@ import util.CursorUtils.handCursor
 fun ArticleCard(
     article: ArticleUI,
     modifier: Modifier = Modifier,
-    imageSize: Dp = 200.dp
+    imageSize: Dp = 200.dp,
+    onClick: (String?) -> Unit,
 ) {
     Surface(
         modifier = modifier
             .pointerHoverIcon(handCursor())
             .clickable {
-//                if(!it.url.isNullOrEmpty()) {
-//                    openURL(URI(it.url))
+                onClick.invoke(article.url)
             },
         contentColor = MaterialTheme.colorScheme.surface
     ) {
@@ -126,5 +126,6 @@ private fun ArticleCardPreview() {
         article = DummyData.article,
         modifier = Modifier
             .fillMaxWidth(),
+        onClick = {}
     )
 }

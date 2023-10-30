@@ -4,8 +4,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import org.jetbrains.skia.Image
 import java.net.URL
+import java.net.URI
+import java.awt.Desktop
+
 object UrlUtils {
-    fun loadPicture(url: String): ImageBitmap =
+    private fun loadPicture(url: String): ImageBitmap =
         Image.makeFromEncoded(URL(url).readBytes())
             .toComposeImageBitmap()
 
@@ -16,5 +19,10 @@ object UrlUtils {
         catch (e: Exception){
             null
         }
+    }
+
+    fun openURL(url: String) {
+        val desktop = Desktop.getDesktop()
+        desktop.browse(URI(url))
     }
 }
