@@ -9,5 +9,6 @@ data class HeadlinesState(
     val articles: List<ArticleUI> = emptyList(),
     val searchQuery: String = "",
     val title: String = "Headlines",
-    val countries: List<CountryCode> = CountryCode.values().toList()
+    val countries: List<CountryCode> = CountryCode.values().toList(),
+    val selectedTabIndex: Int = 0,
 )

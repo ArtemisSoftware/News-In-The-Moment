@@ -7,8 +7,8 @@ import domain.repository.NewsRepository
 
 class NewsRepositoryImpl() : NewsRepository {
 
-    override suspend fun getTopHeadlines(country: String): List<Article> {
-        val news = NewsApiClient.getTopHeadlines(country = country)
+    override suspend fun getTopHeadlines(country: String, topic: String): List<Article> {
+        val news = NewsApiClient.getTopHeadlines(country = country, topic = topic)
         return news.articles.filter { it.content != "[Removed]" }.map { it.toArticle() }
     }
 

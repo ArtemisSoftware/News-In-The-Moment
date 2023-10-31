@@ -31,6 +31,7 @@ fun HeadlineBackLayer(
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.4F)
+                .padding(top = 24.dp)
                 .padding(vertical = 24.dp)
                 .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
