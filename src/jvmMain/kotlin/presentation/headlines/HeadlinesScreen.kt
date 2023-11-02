@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import presentation.headlines.composables.HeadlineBackLayer
 import presentation.headlines.composables.HeadlineFrontLayer
+import presentation.headlines.composables.HeadlinePage
 import presentation.headlines.models.TabItem
 
 @Composable
@@ -117,11 +118,20 @@ private fun HeadlineContent(
                     Text("Loading...")
                 }
             } else {
-                HeadlineFrontLayer(
-                    state = state,
-                    events = events,
-                    tabs = tabs,
-                )
+                if (state.isSearching) {
+                    HeadlinePage(
+                        news = state.news.first(),
+                        openUrl = { url ->
+                            url?.let { events.invoke(HeadlinesEvents.OpenUrl(url = it)) }
+                        },
+                    )
+                } else {
+                    HeadlineFrontLayer(
+                        state = state,
+                        events = events,
+                        tabs = tabs,
+                    )
+                }
             }
         },
     )

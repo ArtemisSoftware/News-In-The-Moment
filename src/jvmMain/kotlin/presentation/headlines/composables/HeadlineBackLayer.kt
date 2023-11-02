@@ -25,9 +25,8 @@ fun HeadlineBackLayer(
     searchQuery: String,
     events: (HeadlinesEvents) -> Unit,
     closeMenu: () -> Unit,
-){
-    Box(modifier = Modifier.fillMaxWidth()){
-
+) {
+    Box(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.4F)
@@ -37,7 +36,6 @@ fun HeadlineBackLayer(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
-
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -58,16 +56,16 @@ fun HeadlineBackLayer(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search button",
-                                tint = Color.Black
+                                tint = Color.Black,
                             )
-                        }
+                        },
                     )
-                }
+                },
             )
 
             Text(
                 text = "Countries",
-                fontSize =  20.sp,
+                fontSize = 20.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
             )
@@ -75,7 +73,7 @@ fun HeadlineBackLayer(
             Divider(modifier = Modifier.width(50.dp))
 
             LazyColumn() {
-                items(countries){ countryCode ->
+                items(countries) { countryCode ->
                     TextButton(
                         onClick = {
                             events.invoke(HeadlinesEvents.GetArticles(countryCode = countryCode))
@@ -84,9 +82,9 @@ fun HeadlineBackLayer(
                         content = {
                             Text(
                                 text = countryCode.description,
-                                fontSize =  16.sp,
+                                fontSize = 16.sp,
                             )
-                        }
+                        },
                     )
                 }
             }

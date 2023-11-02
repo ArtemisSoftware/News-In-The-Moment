@@ -8,7 +8,6 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
-import domain.models.ArticleType
 import domain.models.CountryCode
 import domain.usecases.GetArticlesUseCase
 import domain.usecases.GetTopicsUseCase
@@ -19,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import presentation.headlines.mappers.toNews
-import presentation.headlines.mappers.toUI
 import presentation.headlines.models.TabItem
 import util.UrlUtils.openURL
 
@@ -91,26 +89,18 @@ class HeadlinesViewModel(
 
     private fun getHeadlines(country: CountryCode) {
         try {
-            state = state.copy(isLoading = true)
+            state = state.copy(
+                isLoading = true,
+                isSearching = false,
+                searchQuery = "",
+            )
             updateTitle(country.description)
 
             coroutineScope.launch {
                 val result = getArticlesUseCase(country, topics)
-                val headline = result.get(topics.first())!!.first()
-                val articles = result.get(topics.first())!!.drop(1)
                 state = state.copy(
                     news = result.toNews(defaultImage = defaultImage),
                 )
-                state = state.copy(
-                    headline = headline.toUI(type = ArticleType.HEADLINE, defaultImage = defaultImage),
-                )
-                state = state.copy(
-                    articles = articles.map { it.toUI(defaultImage = defaultImage) },
-                )
-//                state = state.copy(
-//                    headline = headline.toUI(type = ArticleType.HEADLINE, defaultImage = defaultImage),
-//                    articles = articles.map{ it.toUI(defaultImage = defaultImage) }
-//                )
 
                 state = state.copy(isLoading = false)
             }
@@ -121,19 +111,18 @@ class HeadlinesViewModel(
 
     private fun searchArticles() {
         try {
-            state = state.copy(isLoading = true)
+            state = state.copy(
+                isLoading = true,
+                isSearching = true,
+            )
             updateTitle(state.searchQuery.capitalize(Locale.current))
 
             coroutineScope.launch {
                 val result = searchArticlesUseCase(state.searchQuery)
-                val headline = result.first()
-                val articles = result.drop(1)
                 state = state.copy(
-                    headline = headline.toUI(type = ArticleType.HEADLINE, defaultImage = defaultImage),
+                    news = result.toNews(defaultImage = defaultImage),
                 )
-                state = state.copy(
-                    articles = articles.map { it.toUI(defaultImage = defaultImage) },
-                )
+
                 state = state.copy(isLoading = false)
             }
         } catch (e: ClientRequestException) {

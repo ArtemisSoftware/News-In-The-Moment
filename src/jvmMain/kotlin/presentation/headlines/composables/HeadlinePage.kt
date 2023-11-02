@@ -51,8 +51,7 @@ fun HeadlinePage(
             items(news.articles) { article ->
                 ArticleCard(
                     article = article,
-                    modifier = Modifier
-                        .width(400.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = openUrl,
                 )
             }

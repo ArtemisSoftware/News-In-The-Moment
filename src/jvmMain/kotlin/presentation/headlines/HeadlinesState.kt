@@ -6,6 +6,7 @@ import presentation.headlines.models.News
 
 data class HeadlinesState(
     val isLoading: Boolean = false,
+    val isSearching: Boolean = false,
     val news: List<News> = emptyList(),
     val headline: ArticleUI? = null,
     val articles: List<ArticleUI> = emptyList(),

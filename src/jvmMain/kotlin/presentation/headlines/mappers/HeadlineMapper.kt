@@ -18,7 +18,7 @@ fun Article.toUI(type: ArticleType = ArticleType.STANDARD, defaultImage: ImageBi
     )
 }
 
-fun Map<String, List<Article>>.toNews(defaultImage: ImageBitmap): List<News>{
+fun Map<String, List<Article>>.toNews(defaultImage: ImageBitmap): List<News> {
     return this.map { (topic, articles) ->
 
         val headline = articles.first()
@@ -29,4 +29,15 @@ fun Map<String, List<Article>>.toNews(defaultImage: ImageBitmap): List<News>{
             articles = currentArticles.map { it.toUI(defaultImage = defaultImage) },
         )
     }
+}
+
+fun List<Article>.toNews(defaultImage: ImageBitmap): List<News> {
+    val headline = this.first()
+    val currentArticles = this.drop(1)
+    return listOf(
+        News(
+            headline = headline.toUI(type = ArticleType.HEADLINE, defaultImage = defaultImage),
+            articles = currentArticles.map { it.toUI(defaultImage = defaultImage) },
+        ),
+    )
 }
