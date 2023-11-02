@@ -1,33 +1,31 @@
 package presentation.headlines
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.BackdropScaffold
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material.BackdropValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.List
-import androidx.compose.material3.*
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Tab
+import androidx.compose.material.rememberBackdropScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -36,7 +34,7 @@ import presentation.headlines.composables.HeadlineFrontLayer
 import presentation.headlines.models.TabItem
 
 @Composable
-fun HeadlineScreen(){
+fun HeadlineScreen() {
     val viewModel = remember { HeadlinesViewModel() }
     val state = viewModel.state
 
@@ -47,34 +45,20 @@ fun HeadlineScreen(){
     )
 }
 
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun HeadlineContent(
     state: HeadlinesState,
     events: (HeadlinesEvents) -> Unit,
     tabs: List<TabItem>,
-){
+) {
     val scaffoldState = rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
     val scope = rememberCoroutineScope()
-    var pagerState = rememberPagerState(initialPage = state.selectedTabIndex) {
-        tabs.size
-    }
-
-    LaunchedEffect(state.selectedTabIndex){
-        pagerState.animateScrollToPage(state.selectedTabIndex)
-    }
-
-    LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress){
-        if(!pagerState.isScrollInProgress) {
-            events.invoke(HeadlinesEvents.SelectTab(index = pagerState.currentPage))
-        }
-    }
 
     BackdropScaffold(
         scaffoldState = scaffoldState,
         peekHeight = 80.dp,
-        appBar =  {
+        appBar = {
             TopAppBar(
                 title = {
                     Text(
@@ -92,17 +76,17 @@ private fun HeadlineContent(
                                     imageVector = Icons.Outlined.List,
                                     contentDescription = "Localized description",
                                 )
-                            }
+                            },
                         )
                     } else {
                         IconButton(
                             onClick = {
 //                                scope.launch { scaffoldState.conceal()}
-                            }
+                            },
                         ) {
                             Icon(
                                 Icons.Default.Close,
-                                contentDescription = "Close"
+                                contentDescription = "Close",
                             )
                         }
                     }
@@ -124,47 +108,21 @@ private fun HeadlineContent(
         },
         frontLayerElevation = 12.dp,
         frontLayerContent = {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ){
-                TabRow(
-                    selectedTabIndex = state.selectedTabIndex,
-                ){
-                    tabs.forEachIndexed { index, tabItem ->
-                        Tab(
-                            modifier = Modifier.height(80.dp),
-                            selected = (index == state.selectedTabIndex),
-                            onClick = {
-                                events.invoke(HeadlinesEvents.SelectTab(index = index))
-                            },
-                            text = {
-                                Text(
-                                    text = tabItem.title.capitalize(Locale.current),
-                                    fontSize = 16.sp,
-                                )
-                            },
-                       )
-                    }
+            if (state.isLoading) {
+                Column(
+                    modifier = Modifier.fillMaxSize().background(Color.White),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text("Loading...")
                 }
-
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F)
-                ){ index ->
-                    HeadlineFrontLayer(
-                        isLoading = state.isLoading,
-                        articles = state.articles,
-                        headline = state.headline,
-                        openUrl = { url ->
-                            events.invoke(HeadlinesEvents.OpenUrl(url = url))
-                        }
-                    )
-                }
+            } else {
+                HeadlineFrontLayer(
+                    state = state,
+                    events = events,
+                    tabs = tabs,
+                )
             }
-
-
         },
     )
 }
