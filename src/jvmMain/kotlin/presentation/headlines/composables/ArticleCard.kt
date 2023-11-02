@@ -42,12 +42,17 @@ fun ArticleCard(
             ArticleImage(
                 type = article.type,
                 content = {
-                    Image(
-                        bitmap = article.default,
-                        "news thumbnail",
-                        contentScale = ContentScale.Crop,
+                    AsyncImage(
+                        imageUrl = article.imageUrl,
+                        placeHolder = article.default,
                         modifier = Modifier.size(imageSize)
                     )
+//                    Image(
+//                        bitmap = article.default,
+//                        "news thumbnail",
+//                        contentScale = ContentScale.Crop,
+//                        modifier = Modifier.size(imageSize)
+//                    )
                 }
             )
 
