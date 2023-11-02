@@ -1,6 +1,7 @@
 import androidx.compose.ui.graphics.ImageBitmap
 import domain.models.ArticleType
 import presentation.headlines.models.ArticleUI
+import presentation.headlines.models.News
 
 object DummyData {
 
@@ -14,4 +15,5 @@ object DummyData {
     )
 
     val articles = listOf(article, article)
+    val news = News(article, articles)
 }
