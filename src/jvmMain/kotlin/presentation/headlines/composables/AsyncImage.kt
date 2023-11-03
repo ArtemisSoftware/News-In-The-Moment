@@ -40,13 +40,15 @@ fun AsyncImage(
         loading = false
     }
     AnimatedVisibility(
-        visible = !loading,
+        visible = !loading && (imageLib[tempUrl] != null),
     ) {
-        Image(
-            bitmap = imageLib[tempUrl] ?: placeHolder,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-        )
+        imageLib[tempUrl]?.let { image ->
+            Image(
+                bitmap = image,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = modifier,
+            )
+        }
     }
 }
