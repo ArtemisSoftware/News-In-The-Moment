@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import presentation.headlines.models.TabItem
 fun HeadlineFrontLayer(
     state: HeadlinesState,
     tabs: List<TabItem>,
+    imageLib: HashMap<String?, ImageBitmap> = HashMap(),
     events: (HeadlinesEvents) -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = state.selectedTabIndex) {
@@ -71,9 +73,8 @@ fun HeadlineFrontLayer(
         ) { index ->
             HeadlinePage(
                 news = state.news[pagerState.currentPage],
-                openUrl = { url ->
-                    url?.let { events.invoke(HeadlinesEvents.OpenUrl(url = it)) }
-                },
+                imageLib = imageLib,
+                events = events,
             )
         }
     }
@@ -84,10 +85,9 @@ fun HeadlineFrontLayer(
 private fun HeadlineFrontLayerPreview() {
     HeadlineFrontLayer(
         state = HeadlinesState(
-            articles = DummyData.articles,
-            headline = DummyData.articles.first(),
             title = "The title",
         ),
+        imageLib = HashMap(),
         events = {},
         tabs = listOf(),
     )

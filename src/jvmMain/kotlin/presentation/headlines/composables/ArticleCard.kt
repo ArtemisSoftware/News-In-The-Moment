@@ -14,17 +14,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
+import domain.models.Article
 import domain.models.ArticleType
-import presentation.headlines.models.ArticleUI
 import util.CursorUtils.handCursor
 
 @Composable
 fun ArticleCard(
-    article: ArticleUI,
+    article: Article,
+    imageLib: HashMap<String?, ImageBitmap> = HashMap(),
+    updateImageLib: (String, ImageBitmap?) -> Unit,
+    type: ArticleType,
     modifier: Modifier = Modifier,
     imageSize: Dp = 200.dp,
     onClick: (String?) -> Unit,
@@ -46,11 +50,12 @@ fun ArticleCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ArticleImage(
-                type = article.type,
+                type = type,
                 content = {
                     AsyncImage(
+                        imageLib = imageLib,
                         imageUrl = article.imageUrl,
-                        placeHolder = article.default,
+                        updateImageLib = updateImageLib,
                         modifier = Modifier.size(imageSize),
                     )
                 },
@@ -77,7 +82,7 @@ fun ArticleCard(
                 Column {
                     Text(
                         text = article.title,
-                        fontSize = when (article.type) {
+                        fontSize = when (type) {
                             ArticleType.HEADLINE -> 20.sp
                             ArticleType.STANDARD -> 14.sp
                         },
@@ -103,7 +108,7 @@ fun ArticleCard(
                         if ((lastIndexTitle + 1) < article.title.length && lastIndexTitle != 0) {
                             Text(
                                 text = article.title.substring(lastIndexTitle + 1),
-                                fontSize = when (article.type) {
+                                fontSize = when (type) {
                                     ArticleType.HEADLINE -> 20.sp
                                     ArticleType.STANDARD -> 14.sp
                                 },
@@ -194,8 +199,10 @@ private fun ArticleImage(
 private fun ArticleCardPreview() {
     ArticleCard(
         article = DummyData.article,
+        type = ArticleType.HEADLINE,
         modifier = Modifier
             .fillMaxWidth(),
         onClick = {},
+        updateImageLib = { _, _ -> },
     )
 }

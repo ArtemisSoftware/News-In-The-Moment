@@ -5,10 +5,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SearchArticlesUseCase(
-    private val newsRepository: NewsRepository
+    private val newsRepository: NewsRepository,
 ) {
 
-    suspend operator fun invoke(query: String) = withContext(Dispatchers.IO){
+    suspend operator fun invoke(query: String) = withContext(Dispatchers.IO) {
         newsRepository.searchNews(query = query)
     }
 }

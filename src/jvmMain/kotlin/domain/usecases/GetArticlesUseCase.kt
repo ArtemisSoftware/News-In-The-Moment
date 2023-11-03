@@ -11,11 +11,10 @@ class GetArticlesUseCase(
 ) {
 
     suspend operator fun invoke(country: CountryCode, topics: List<String>) = withContext(Dispatchers.IO) {
-        val articles = topics
-            .map { topic -> async { topic to newsRepository.getTopHeadlines(country = country.code, topic = topic) } }
+        val news = topics
+            .map { topic -> async { newsRepository.getTopHeadlines(country = country.code, topic = topic) } }
             .map { it.await() }
-            .toMap()
 
-        articles
+        news
     }
 }

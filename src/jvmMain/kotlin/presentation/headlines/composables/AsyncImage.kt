@@ -8,16 +8,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.useResource
 import domain.usecases.LoadImageAsyncUseCase
 import org.koin.java.KoinJavaComponent
-
-private var imageLib = hashMapOf<String?, ImageBitmap>()
 
 @Composable
 fun AsyncImage(
     imageUrl: String? = null,
-    placeHolder: ImageBitmap,
+    imageLib: HashMap<String?, ImageBitmap>,
     modifier: Modifier = Modifier,
+    updateImageLib: (String, ImageBitmap?) -> Unit,
     loadImageAsyncUseCase: LoadImageAsyncUseCase = KoinJavaComponent.get(LoadImageAsyncUseCase::class.java),
 ) {
     var imageBitmap by remember() { mutableStateOf<ImageBitmap?>(null) }
@@ -29,11 +30,10 @@ fun AsyncImage(
             LaunchedEffect(url) {
                 val loadedImage = loadImageAsyncUseCase(url)
                 imageBitmap = loadedImage?.toComposeImageBitmap()
-                imageLib[imageUrl] = imageBitmap ?: placeHolder
+                updateImageLib(url, imageBitmap)
                 loading = false
             }
         } ?: run {
-            imageLib[tempUrl] = placeHolder
             loading = false
         }
     } else {

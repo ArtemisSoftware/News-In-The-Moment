@@ -2,22 +2,25 @@ package presentation.headlines
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import domain.models.CountryCode
+import domain.models.News
 import domain.usecases.GetArticlesUseCase
 import domain.usecases.GetTopicsUseCase
 import domain.usecases.SearchArticlesUseCase
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
-import presentation.headlines.mappers.toNews
 import presentation.headlines.models.TabItem
 import util.UrlUtils.openURL
 
@@ -26,17 +29,21 @@ class HeadlinesViewModel(
     private val searchArticlesUseCase: SearchArticlesUseCase = KoinJavaComponent.get(SearchArticlesUseCase::class.java),
     private val getTopicsUseCase: GetTopicsUseCase = KoinJavaComponent.get(GetTopicsUseCase::class.java),
 ) {
-    var state by mutableStateOf(HeadlinesState())
+    private val _state = MutableStateFlow(HeadlinesState())
+    val state: StateFlow<HeadlinesState> = _state.asStateFlow()
+
     private var coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private var defaultImage: ImageBitmap = useResource("no_image.png") {
+    private val placeHolder = useResource("no_image.png") {
         loadImageBitmap(it)
     }
-
     private val topics = getTopicsUseCase()
     val tabItems = topics.map { TabItem(title = it) }
+    var imageLib = mutableStateOf(hashMapOf<String?, ImageBitmap>())
+        private set
 
     init {
+        imageLib.value["no_image"] = placeHolder
         getHeadlines(CountryCode.USA)
     }
 
@@ -60,19 +67,19 @@ class HeadlinesViewModel(
             is HeadlinesEvents.SelectTab -> {
                 selectTab(events.index)
             }
+
+            is HeadlinesEvents.UpdateImageLib -> {
+                imageLib.value[events.url] = events.image ?: placeHolder
+            }
         }
     }
 
-    private fun updateSearchText(text: String) {
-        state = state.copy(
-            searchQuery = text,
-        )
-    }
-
-    private fun updateTitle(subtitle: String) {
-        state = state.copy(
-            title = "Headlines $subtitle",
-        )
+    private fun updateSearchText(text: String) = with(_state) {
+        update {
+            it.copy(
+                searchQuery = text,
+            )
+        }
     }
 
     private fun openUrl(url: String?) {
@@ -81,49 +88,67 @@ class HeadlinesViewModel(
         }
     }
 
-    private fun selectTab(index: Int) {
-        state = state.copy(
-            selectedTabIndex = index,
-        )
+    private fun selectTab(index: Int) = with(_state) {
+        update {
+            it.copy(
+                selectedTabIndex = index,
+            )
+        }
+    }
+
+    private fun updateSearch(
+        isLoading: Boolean,
+        isSearching: Boolean,
+        searchQuery: String = "",
+        subtitle: String,
+    ) = with(_state) {
+        update {
+            it.copy(
+                isLoading = isLoading,
+                isSearching = isSearching,
+                searchQuery = searchQuery,
+                title = "Headlines $subtitle",
+            )
+        }
+    }
+
+    private fun updateHeadlines(news: List<News>) = with(_state) {
+        update {
+            it.copy(
+                news = news,
+                isLoading = false,
+            )
+        }
     }
 
     private fun getHeadlines(country: CountryCode) {
         try {
-            state = state.copy(
+            updateSearch(
                 isLoading = true,
                 isSearching = false,
-                searchQuery = "",
+                subtitle = country.description,
             )
-            updateTitle(country.description)
 
             coroutineScope.launch {
                 val result = getArticlesUseCase(country, topics)
-                state = state.copy(
-                    news = result.toNews(defaultImage = defaultImage),
-                )
-
-                state = state.copy(isLoading = false)
+                updateHeadlines(news = result)
             }
         } catch (e: ClientRequestException) {
             println("Error fetching data: ${e.message}")
         }
     }
 
-    private fun searchArticles() {
+    private fun searchArticles() = with(_state.value) {
         try {
-            state = state.copy(
+            updateSearch(
                 isLoading = true,
                 isSearching = true,
+                subtitle = searchQuery.capitalize(Locale.current),
             )
-            updateTitle(state.searchQuery.capitalize(Locale.current))
 
             coroutineScope.launch {
-                val result = searchArticlesUseCase(state.searchQuery)
-                state = state.copy(
-                    news = result.toNews(defaultImage = defaultImage),
-                )
-
-                state = state.copy(isLoading = false)
+                val result = searchArticlesUseCase(searchQuery)
+                updateHeadlines(news = listOf(result))
             }
         } catch (e: ClientRequestException) {
             println("Error fetching data: ${e.message}")

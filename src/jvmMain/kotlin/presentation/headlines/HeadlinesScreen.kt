@@ -20,11 +20,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,13 +37,13 @@ import presentation.headlines.composables.HeadlinePage
 import presentation.headlines.models.TabItem
 
 @Composable
-fun HeadlineScreen() {
-    val viewModel = remember { HeadlinesViewModel() }
-    val state = viewModel.state
+fun HeadlineScreen(viewModel: HeadlinesViewModel = remember { HeadlinesViewModel() }) {
+    val state = viewModel.state.collectAsState()
 
     HeadlineContent(
         tabs = viewModel.tabItems,
-        state = state,
+        state = state.value,
+        imageLib = viewModel.imageLib.value,
         events = viewModel::onTriggerEvent,
     )
 }
@@ -52,6 +54,7 @@ private fun HeadlineContent(
     state: HeadlinesState,
     events: (HeadlinesEvents) -> Unit,
     tabs: List<TabItem>,
+    imageLib: HashMap<String?, ImageBitmap>,
 ) {
     val scaffoldState = rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
     val scope = rememberCoroutineScope()
@@ -121,15 +124,15 @@ private fun HeadlineContent(
                 if (state.isSearching) {
                     HeadlinePage(
                         news = state.news.first(),
-                        openUrl = { url ->
-                            url?.let { events.invoke(HeadlinesEvents.OpenUrl(url = it)) }
-                        },
+                        events = events,
+                        imageLib = imageLib,
                     )
                 } else {
                     HeadlineFrontLayer(
                         state = state,
                         events = events,
                         tabs = tabs,
+                        imageLib = imageLib,
                     )
                 }
             }
@@ -142,11 +145,10 @@ private fun HeadlineContent(
 private fun HeadlineContentPreview() {
     HeadlineContent(
         state = HeadlinesState(
-            articles = DummyData.articles,
-            headline = DummyData.articles.first(),
             title = "The title",
         ),
         events = {},
         tabs = listOf(),
+        imageLib = HashMap(),
     )
 }

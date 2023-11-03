@@ -10,5 +10,5 @@ data class NewsDto(
     @SerializedName("status")
     val status: String,
     @SerializedName("totalResults")
-    val totalResults: Int
+    val totalResults: Int,
 )
