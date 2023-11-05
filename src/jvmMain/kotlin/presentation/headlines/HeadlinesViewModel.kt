@@ -71,6 +71,10 @@ class HeadlinesViewModel(
             is HeadlinesEvents.UpdateImageLib -> {
                 imageLib.value[events.url] = events.image ?: placeHolder
             }
+
+            HeadlinesEvents.Refresh -> {
+                refresh()
+            }
         }
     }
 
@@ -100,6 +104,7 @@ class HeadlinesViewModel(
         isLoading: Boolean,
         isSearching: Boolean,
         searchQuery: String = "",
+        countryCode: CountryCode,
         subtitle: String,
     ) = with(_state) {
         update {
@@ -107,6 +112,7 @@ class HeadlinesViewModel(
                 isLoading = isLoading,
                 isSearching = isSearching,
                 searchQuery = searchQuery,
+                countryCode = countryCode,
                 title = "Headlines $subtitle",
             )
         }
@@ -126,6 +132,7 @@ class HeadlinesViewModel(
             updateSearch(
                 isLoading = true,
                 isSearching = false,
+                countryCode = country,
                 subtitle = country.description,
             )
 
@@ -143,6 +150,7 @@ class HeadlinesViewModel(
             updateSearch(
                 isLoading = true,
                 isSearching = true,
+                countryCode = countryCode,
                 subtitle = searchQuery.capitalize(Locale.current),
             )
 
@@ -152,6 +160,14 @@ class HeadlinesViewModel(
             }
         } catch (e: ClientRequestException) {
             println("Error fetching data: ${e.message}")
+        }
+    }
+
+    private fun refresh() = with(_state.value) {
+        if (isSearching) {
+            searchArticles()
+        } else {
+            getHeadlines(countryCode)
         }
     }
 }

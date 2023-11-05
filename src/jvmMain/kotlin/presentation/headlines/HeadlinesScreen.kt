@@ -11,6 +11,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -74,29 +75,28 @@ private fun HeadlineContent(
                 navigationIcon = {
                     if (scaffoldState.isConcealed) {
                         FilledIconButton(
-                            onClick = {},
+                            onClick = {
+                                events.invoke(HeadlinesEvents.Refresh)
+                            },
                             content = {
                                 Icon(
-                                    imageVector = Icons.Outlined.List,
+                                    imageVector = Icons.Outlined.Refresh,
                                     contentDescription = "Localized description",
                                 )
                             },
                         )
                     } else {
                         IconButton(
-                            onClick = {
-//                                scope.launch { scaffoldState.conceal()}
+                            onClick = { scope.launch { scaffoldState.conceal() } },
+                            content = {
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = "Close",
+                                )
                             },
-                        ) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Close",
-                            )
-                        }
+                        )
                     }
                 },
-//                elevation = 0.dp,
-//                backgroundColor = Color.Transparent
             )
         },
         backLayerBackgroundColor = MaterialTheme.colorScheme.background,

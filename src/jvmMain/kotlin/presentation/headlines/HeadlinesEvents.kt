@@ -11,4 +11,6 @@ sealed class HeadlinesEvents {
     data class SelectTab(val index: Int) : HeadlinesEvents()
 
     data class UpdateImageLib(val url: String, val image: ImageBitmap? = null) : HeadlinesEvents()
+
+    object Refresh : HeadlinesEvents()
 }
