@@ -104,6 +104,7 @@ class HeadlinesViewModel(
         isLoading: Boolean,
         isSearching: Boolean,
         searchQuery: String = "",
+        lastSearchQuery: String? = null,
         countryCode: CountryCode,
         subtitle: String,
     ) = with(_state) {
@@ -112,6 +113,7 @@ class HeadlinesViewModel(
                 isLoading = isLoading,
                 isSearching = isSearching,
                 searchQuery = searchQuery,
+                lastSearchQuery = lastSearchQuery,
                 countryCode = countryCode,
                 title = "Headlines $subtitle",
             )
@@ -145,17 +147,18 @@ class HeadlinesViewModel(
         }
     }
 
-    private fun searchArticles() = with(_state.value) {
+    private fun searchArticles(query: String? = null) = with(_state.value) {
         try {
             updateSearch(
                 isLoading = true,
                 isSearching = true,
                 countryCode = countryCode,
-                subtitle = searchQuery.capitalize(Locale.current),
+                lastSearchQuery = query ?: searchQuery,
+                subtitle = query ?: searchQuery.capitalize(Locale.current),
             )
 
             coroutineScope.launch {
-                val result = searchArticlesUseCase(searchQuery)
+                val result = searchArticlesUseCase(query ?: searchQuery)
                 updateHeadlines(news = listOf(result))
             }
         } catch (e: ClientRequestException) {
@@ -165,7 +168,7 @@ class HeadlinesViewModel(
 
     private fun refresh() = with(_state.value) {
         if (isSearching) {
-            searchArticles()
+            searchArticles(lastSearchQuery)
         } else {
             getHeadlines(countryCode)
         }

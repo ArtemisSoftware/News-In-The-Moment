@@ -9,6 +9,7 @@ data class HeadlinesState(
     val countryCode: CountryCode = CountryCode.USA,
     val news: List<News> = emptyList(),
     val searchQuery: String = "",
+    val lastSearchQuery: String? = null,
     val title: String = "Headlines",
     val countries: List<CountryCode> = CountryCode.values().toList(),
     val selectedTabIndex: Int = 0,
