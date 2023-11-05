@@ -33,6 +33,7 @@ kotlin {
 
                 implementation("io.ktor:ktor-client-cio-jvm:2.3.2")
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.2")
+                implementation("io.ktor:ktor-client-logging:2.3.2")
 
                 implementation("io.insert-koin:koin-core:3.2.0")
                 implementation("io.insert-koin:koin-logger-slf4j:3.2.0")
