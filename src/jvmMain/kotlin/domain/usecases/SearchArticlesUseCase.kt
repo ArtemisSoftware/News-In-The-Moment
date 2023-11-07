@@ -1,5 +1,7 @@
 package domain.usecases
 
+import data.remote.exceptions.NewsException
+import domain.Resource
 import domain.repository.NewsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -9,6 +11,11 @@ class SearchArticlesUseCase(
 ) {
 
     suspend operator fun invoke(query: String) = withContext(Dispatchers.IO) {
-        newsRepository.searchNews(query = query)
+        try {
+            val result = newsRepository.searchNews(query = query)
+            Resource.Success(listOf(result))
+        } catch (e: NewsException) {
+            Resource.Error(e.message)
+        }
     }
 }

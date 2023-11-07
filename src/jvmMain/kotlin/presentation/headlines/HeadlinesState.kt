@@ -14,4 +14,5 @@ data class HeadlinesState(
     val countries: List<CountryCode> = CountryCode.values().toList(),
     val selectedTabIndex: Int = 0,
     val refreshing: Boolean = false,
+    val error: String? = null,
 )

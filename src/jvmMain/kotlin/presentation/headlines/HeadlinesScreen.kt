@@ -120,6 +120,14 @@ private fun HeadlineContent(
                 ) {
                     Text("Loading...")
                 }
+            } else if (!state.error.isNullOrEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxSize().background(Color.White),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(state.error)
+                }
             } else {
                 if (state.isSearching) {
                     HeadlinePage(
@@ -128,12 +136,12 @@ private fun HeadlineContent(
                         imageLib = imageLib,
                     )
                 } else {
-                    HeadlineFrontLayer(
-                        state = state,
-                        events = events,
-                        tabs = tabs,
-                        imageLib = imageLib,
-                    )
+//                    HeadlineFrontLayer(
+//                        state = state,
+//                        events = events,
+//                        tabs = tabs,
+//                        imageLib = imageLib,
+//                    )
                 }
             }
         },

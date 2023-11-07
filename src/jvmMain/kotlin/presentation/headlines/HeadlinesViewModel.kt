@@ -7,6 +7,7 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
+import domain.Resource
 import domain.models.CountryCode
 import domain.models.News
 import domain.usecases.GetArticlesUseCase
@@ -44,7 +45,7 @@ class HeadlinesViewModel(
 
     init {
         imageLib.value["no_image"] = placeHolder
-        getHeadlines(CountryCode.USA)
+        // --getHeadlines(CountryCode.USA)
     }
 
     fun onTriggerEvent(events: HeadlinesEvents) {
@@ -120,11 +121,12 @@ class HeadlinesViewModel(
         }
     }
 
-    private fun updateHeadlines(news: List<News>) = with(_state) {
+    private fun updateHeadlines(news: List<News> = emptyList(), error: String? = null) = with(_state) {
         update {
             it.copy(
                 news = news,
                 isLoading = false,
+                error = error,
             )
         }
     }
@@ -159,7 +161,16 @@ class HeadlinesViewModel(
 
             coroutineScope.launch {
                 val result = searchArticlesUseCase(query ?: searchQuery)
-                updateHeadlines(news = listOf(result))
+
+                when (result) {
+                    is Resource.Success -> {
+                        updateHeadlines(news = result.data)
+                    }
+                    is Resource.Error -> {
+                        updateHeadlines(error = result.error)
+                    }
+                    else -> Unit
+                }
             }
         } catch (e: ClientRequestException) {
             println("Error fetching data: ${e.message}")

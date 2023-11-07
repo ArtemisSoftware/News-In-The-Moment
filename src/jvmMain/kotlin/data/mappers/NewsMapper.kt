@@ -15,8 +15,10 @@ fun ArticleDto.toArticle(): Article {
 }
 
 fun List<ArticleDto>.toNews(): News {
-    val headline = this.first()
-    val currentArticles = if (this.isEmpty()) emptyList() else this.drop(1)
+    val articles = this.filter { it.content != "[Removed]" }
+
+    val headline = articles.first()
+    val currentArticles = if (articles.isEmpty()) emptyList() else articles.drop(1)
     return News(
         headline = headline.toArticle(),
         articles = currentArticles.map { it.toArticle() },
