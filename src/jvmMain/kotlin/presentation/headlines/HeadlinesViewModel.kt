@@ -38,14 +38,13 @@ class HeadlinesViewModel(
     private val placeHolder = useResource("no_image.png") {
         loadImageBitmap(it)
     }
-    private val topics = getTopicsUseCase()
-    val tabItems = topics.map { TabItem(title = it) }
+
     var imageLib = mutableStateOf(hashMapOf<String?, ImageBitmap>())
         private set
 
     init {
         imageLib.value["no_image"] = placeHolder
-        // --getHeadlines(CountryCode.USA)
+        getHeadlines(CountryCode.USA)
     }
 
     fun onTriggerEvent(events: HeadlinesEvents) {
@@ -127,6 +126,8 @@ class HeadlinesViewModel(
                 news = news,
                 isLoading = false,
                 error = error,
+                tabs = news.map { TabItem(it.topic) },
+                selectedTabIndex = 0,
             )
         }
     }
@@ -140,28 +141,10 @@ class HeadlinesViewModel(
                 subtitle = country.description,
             )
 
+            val topics = getTopicsUseCase()
+
             coroutineScope.launch {
                 val result = getArticlesUseCase(country, topics)
-                updateHeadlines(news = result)
-            }
-        } catch (e: ClientRequestException) {
-            println("Error fetching data: ${e.message}")
-        }
-    }
-
-    private fun searchArticles(query: String? = null) = with(_state.value) {
-        try {
-            updateSearch(
-                isLoading = true,
-                isSearching = true,
-                countryCode = countryCode,
-                lastSearchQuery = query ?: searchQuery,
-                subtitle = query ?: searchQuery.capitalize(Locale.current),
-            )
-
-            coroutineScope.launch {
-                val result = searchArticlesUseCase(query ?: searchQuery)
-
                 when (result) {
                     is Resource.Success -> {
                         updateHeadlines(news = result.data)
@@ -174,6 +157,30 @@ class HeadlinesViewModel(
             }
         } catch (e: ClientRequestException) {
             println("Error fetching data: ${e.message}")
+        }
+    }
+
+    private fun searchArticles(query: String? = null) = with(_state.value) {
+        updateSearch(
+            isLoading = true,
+            isSearching = true,
+            countryCode = countryCode,
+            lastSearchQuery = query ?: searchQuery,
+            subtitle = query ?: searchQuery.capitalize(Locale.current),
+        )
+
+        coroutineScope.launch {
+            val result = searchArticlesUseCase(query ?: searchQuery)
+
+            when (result) {
+                is Resource.Success -> {
+                    updateHeadlines(news = result.data)
+                }
+                is Resource.Error -> {
+                    updateHeadlines(error = result.error)
+                }
+                else -> Unit
+            }
         }
     }
 

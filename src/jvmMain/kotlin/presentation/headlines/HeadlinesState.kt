@@ -2,6 +2,7 @@ package presentation.headlines
 
 import domain.models.CountryCode
 import domain.models.News
+import presentation.headlines.models.TabItem
 
 data class HeadlinesState(
     val isLoading: Boolean = false,
@@ -15,4 +16,5 @@ data class HeadlinesState(
     val selectedTabIndex: Int = 0,
     val refreshing: Boolean = false,
     val error: String? = null,
+    val tabs: List<TabItem> = emptyList(),
 )

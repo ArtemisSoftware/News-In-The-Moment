@@ -11,5 +11,5 @@ object DummyData {
     )
 
     val articles = listOf(article, article)
-    val news = News(article, articles)
+    val news = News("", article, articles)
 }

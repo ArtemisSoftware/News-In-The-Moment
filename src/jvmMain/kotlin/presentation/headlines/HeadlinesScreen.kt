@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 import presentation.headlines.composables.HeadlineBackLayer
 import presentation.headlines.composables.HeadlineFrontLayer
 import presentation.headlines.composables.HeadlinePage
+import presentation.headlines.composables.Loading
 import presentation.headlines.models.TabItem
 
 @Composable
@@ -42,7 +43,6 @@ fun HeadlineScreen(viewModel: HeadlinesViewModel = remember { HeadlinesViewModel
     val state = viewModel.state.collectAsState()
 
     HeadlineContent(
-        tabs = viewModel.tabItems,
         state = state.value,
         imageLib = viewModel.imageLib.value,
         events = viewModel::onTriggerEvent,
@@ -54,7 +54,6 @@ fun HeadlineScreen(viewModel: HeadlinesViewModel = remember { HeadlinesViewModel
 private fun HeadlineContent(
     state: HeadlinesState,
     events: (HeadlinesEvents) -> Unit,
-    tabs: List<TabItem>,
     imageLib: HashMap<String?, ImageBitmap>,
 ) {
     val scaffoldState = rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
@@ -112,36 +111,34 @@ private fun HeadlineContent(
         },
         frontLayerElevation = 12.dp,
         frontLayerContent = {
-            if (state.isLoading) {
-                Column(
-                    modifier = Modifier.fillMaxSize().background(Color.White),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("Loading...")
+            when{
+
+                state.isLoading -> {
+                    Loading()
                 }
-            } else if (!state.error.isNullOrEmpty()) {
-                Column(
-                    modifier = Modifier.fillMaxSize().background(Color.White),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(state.error)
+                (!state.error.isNullOrEmpty()) -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize().background(Color.White),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(state.error)
+                    }
                 }
-            } else {
-                if (state.isSearching) {
+                state.isSearching -> {
                     HeadlinePage(
                         news = state.news.first(),
                         events = events,
                         imageLib = imageLib,
                     )
-                } else {
-//                    HeadlineFrontLayer(
-//                        state = state,
-//                        events = events,
-//                        tabs = tabs,
-//                        imageLib = imageLib,
-//                    )
+                }
+                else -> {
+                    HeadlineFrontLayer(
+                        state = state,
+                        events = events,
+                        tabs = state.tabs,
+                        imageLib = imageLib,
+                    )
                 }
             }
         },
@@ -156,7 +153,6 @@ private fun HeadlineContentPreview() {
             title = "The title",
         ),
         events = {},
-        tabs = listOf(),
         imageLib = HashMap(),
     )
 }

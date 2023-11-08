@@ -9,18 +9,13 @@ import domain.repository.NewsRepository
 class NewsRepositoryImpl(private val newsSource: NewsSource) : NewsRepository {
 
     override suspend fun getTopHeadlines(country: String, topic: String): News {
-
-//        val news = newsSource.getTopHeadlines(country = country, topic = topic)
-//        return news.articles.filter { it.content != "[Removed]" }.toNews()
-
-        val news = NewsApiClient.getTopHeadlines(country = country, topic = topic)
-        return news.articles.toNews()
+        val news = newsSource.getTopHeadlines(country = country, topic = topic)
+        //val news = NewsApiClient.getTopHeadlines(country = country, topic = topic)
+        return news.articles.toNews(topic = topic)
     }
 
     override suspend fun searchNews(query: String): News {
-
         val news = newsSource.searchNews(query)
-//        val news = NewsApiClient.getSearchedNews(query)
-        return news.articles.toNews()
+        return news.articles.toNews(topic = query)
     }
 }
