@@ -19,5 +19,5 @@ Compose desktop app that searches news
 
 Image #1            |           Image #2            |  Image #3           
 :-------------------------:|:-----------------------------:|:----------------------------:
-<img src="images/nitm_1.jpg">    | <img src="images/nitm_2.png"> |  <img src="images/nitm_3.png"> 
+<img src="images/nitm_1.jpg">    | <img src="images/nitm_2.jpg"> |  <img src="images/nitm_3.jpg"> 
 
