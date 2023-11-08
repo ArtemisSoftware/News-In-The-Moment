@@ -17,7 +17,7 @@ Compose desktop app that searches news
 
 
 
-Image #1            |  Image #2             |  Image #3           
-:-------------------------:|:----------------------------:|:----------------------------:
-<img src="images/Demeter_Recipes_1.jpg">    |  <img src="images/Demeter_Recipes_2.jpg">     |  <img src="images/Demeter_Recipes_3.jpg"> 
+Image #1            |           Image #2            |  Image #3           
+:-------------------------:|:-----------------------------:|:----------------------------:
+<img src="images/nitm_1.png">    | <img src="images/nitm_2.png"> |  <img src="images/nitm_3.png"> 
 
