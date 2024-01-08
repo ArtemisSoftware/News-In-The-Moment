@@ -8,7 +8,7 @@ Compose desktop app that searches news
 
 ## Architecture & Libraries
     - MVI
-    - Ktop
+    - Ktor
     - Dependency Injection - Koin
     - Kotlin Coroutines
 
